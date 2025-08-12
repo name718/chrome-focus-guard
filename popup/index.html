@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>chrome-focus-guard</title>
+    <style>
+      html, body { margin: 0; padding: 0; }
+      body {
+        width: 300px;
+        min-height: 160px;
+        box-sizing: border-box;
+        padding: 12px;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, Helvetica, "Apple Color Emoji", "Segoe UI Emoji";
+      }
+      h1 { font-size: 16px; margin: 0 0 8px; }
+      p { margin: 8px 0; color: #444; }
+      button { padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; background: #0ea5e9; color: white; cursor: pointer; }
+      button:hover { background: #0284c7; }
+      .row { display: flex; gap: 8px; align-items: center; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    </style>
+  </head>
+  <body>
+    <h1>chrome-focus-guard</h1>
+    <p>Minimal scaffold is ready. Use this popup to interact with the extension.</p>
+    <div class="row">
+      <button id="ping">Ping background</button>
+      <span id="status" class="mono">idle</span>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+  </html>
+

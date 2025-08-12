@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "chrome-focus-guard",
+  "version": "0.1.0",
+  "description": "Guard your focus by filtering distractions and managing focus time.",
+  "action": {
+    "default_title": "chrome-focus-guard",
+    "default_popup": "popup/index.html"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-scripts/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options/index.html"
+}
+
