@@ -1,35 +1,210 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>chrome-focus-guard</title>
+    <title>FocusGuard</title>
     <style>
-      html, body { margin: 0; padding: 0; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      
       body {
-        width: 300px;
-        min-height: 160px;
-        box-sizing: border-box;
-        padding: 12px;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, Helvetica, "Apple Color Emoji", "Segoe UI Emoji";
+        width: 320px;
+        min-height: 400px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
       }
-      h1 { font-size: 16px; margin: 0 0 8px; }
-      p { margin: 8px 0; color: #444; }
-      button { padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; background: #0ea5e9; color: white; cursor: pointer; }
-      button:hover { background: #0284c7; }
-      .row { display: flex; gap: 8px; align-items: center; }
-      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      
+      .header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      
+      .subtitle {
+        font-size: 14px;
+        opacity: 0.8;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .section {
+        margin-bottom: 24px;
+      }
+      
+      .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .button-group {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      
+      .btn {
+        flex: 1;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+      
+      .btn.primary {
+        background: #10b981;
+        border-color: #10b981;
+      }
+      
+      .btn.primary:hover {
+        background: #059669;
+      }
+      
+      .btn.danger {
+        background: #ef4444;
+        border-color: #ef4444;
+      }
+      
+      .btn.danger:hover {
+        background: #dc2626;
+      }
+      
+      .status {
+        font-size: 12px;
+        opacity: 0.7;
+        text-align: center;
+        margin-top: 8px;
+      }
+      
+      .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+      }
+      
+      .stat-item {
+        text-align: center;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .stat-number {
+        font-size: 20px;
+        font-weight: 700;
+        color: #10b981;
+      }
+      
+      .stat-label {
+        font-size: 12px;
+        opacity: 0.8;
+        margin-top: 4px;
+      }
+      
+      .timer-display {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        margin: 16px 0;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
     </style>
   </head>
   <body>
-    <h1>chrome-focus-guard</h1>
-    <p>Minimal scaffold is ready. Use this popup to interact with the extension.</p>
-    <div class="row">
-      <button id="ping">Ping background</button>
-      <span id="status" class="mono">idle</span>
+    <div class="header">
+      <div class="title">🧘‍♀️ FocusGuard</div>
+      <div class="subtitle">专注结界，守护你的时间</div>
+    </div>
+    
+    <div class="content">
+      <!-- 番茄钟控制 -->
+      <div class="section">
+        <div class="section-title">
+          <span>⏰</span>
+          番茄钟
+        </div>
+        <div class="timer-display" id="timer-display">00:00</div>
+        <div class="button-group">
+          <button class="btn primary" id="start-pomodoro">开始专注</button>
+          <button class="btn danger" id="stop-pomodoro">停止</button>
+        </div>
+        <div class="status" id="timer-status">准备就绪</div>
+      </div>
+      
+      <!-- 页面净化 -->
+      <div class="section">
+        <div class="section-title">
+          <span>🧹</span>
+          页面净化
+        </div>
+        <div class="button-group">
+          <button class="btn" id="toggle-cleaner">开启净化</button>
+          <button class="btn" id="add-to-blacklist">加入黑名单</button>
+        </div>
+        <div class="status" id="cleaner-status">净化模式已关闭</div>
+      </div>
+      
+      <!-- 统计数据 -->
+      <div class="section">
+        <div class="section-title">
+          <span>📊</span>
+          今日统计
+        </div>
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-number" id="total-pomodoros">0</div>
+            <div class="stat-label">番茄钟</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="focus-time">0</div>
+            <div class="stat-label">专注时间(分钟)</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 快捷操作 -->
+      <div class="section">
+        <div class="section-title">
+          <span>⚡</span>
+          快捷操作
+        </div>
+        <div class="button-group">
+          <button class="btn" id="open-options">设置</button>
+          <button class="btn" id="view-stats">统计</button>
+        </div>
+      </div>
     </div>
 
     <script src="popup.js"></script>
   </body>
-  </html>
+</html>
 

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专注时间 - FocusGuard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .motivation {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .motivation-text {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .todo-list {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .todo-checkbox.checked {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+        }
+
+        .todo-text.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .timer {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .unlock-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .unlock-button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .unlock-button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .breathing-animation {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="logo">🧘‍♀️</div>
+        <h1 class="title">专注时间</h1>
+        <p class="subtitle">现在是你的专注时段，暂时远离干扰，专注于重要的事情</p>
+
+        <div class="motivation">
+            <div class="motivation-text" id="motivation-text">写完PPT再刷！</div>
+            <div class="breathing-animation"></div>
+        </div>
+
+        <div class="todo-list" id="todo-list">
+            <div class="todo-item">
+                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                <div class="todo-text">完成今日最重要的任务</div>
+            </div>
+            <div class="todo-item">
+                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                <div class="todo-text">回复重要邮件</div>
+            </div>
+            <div class="todo-item">
+                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                <div class="todo-text">整理工作笔记</div>
+            </div>
+        </div>
+
+        <div class="timer" id="timer">05:00</div>
+        <button class="unlock-button" id="unlock-button" onclick="unlockSite()" disabled>
+            5分钟后可访问
+        </button>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="total-pomodoros">0</div>
+                <div class="stat-label">今日番茄钟</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="focus-time">0</div>
+                <div class="stat-label">专注时间(分钟)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="streak-days">0</div>
+                <div class="stat-label">连续天数</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="focus-redirect.js"></script>
+</body>
+</html>
