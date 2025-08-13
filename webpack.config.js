@@ -46,7 +46,7 @@ module.exports = (env, argv) => {
     },
     
     plugins: [
-      // 复制静态文件
+      // 复制静态文件（在JavaScript构建之后）
       new CopyWebpackPlugin({
         patterns: [
           { from: 'manifest.json', to: 'manifest.json' },
