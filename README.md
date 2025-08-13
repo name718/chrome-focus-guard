@@ -77,18 +77,68 @@ chrome-focus-guard/
     └── focus-stats.js         # 专注统计
 ```
 
+## 开发环境搭建
+
+### 前置要求
+- Node.js >= 16.0.0
+- npm >= 8.0.0
+
+### 安装依赖
+```bash
+npm install
+```
+
+### 开发命令
+```bash
+# Webpack构建（推荐用于生产）
+npm run build          # 生产构建（压缩、优化）
+npm run build:dev      # 开发构建（包含source map）
+npm run dev            # 开发模式（监听文件变化）
+
+# 简化构建（快速开发）
+npm run build:simple   # 简单文件复制构建
+npm run build:simple:watch  # 监听文件变化并自动构建
+
+# 工具命令
+npm run clean          # 清理构建目录
+npm run zip            # 创建生产发布包
+npm run zip:dev        # 创建开发发布包
+npm run zip:simple     # 创建简化构建发布包
+```
+
+### 构建方式选择
+- **Webpack构建**: 适合生产环境，提供代码压缩、优化、模块化
+- **简化构建**: 适合快速开发和测试，直接复制文件，无需编译
+
+## 构建配置
+
+### Webpack 配置
+- **入口文件**: 分别配置background、content-scripts、popup等模块
+- **输出优化**: 代码分割、Tree Shaking、压缩优化
+- **开发体验**: 热重载、Source Map、错误提示
+
+### Babel 配置
+- **目标环境**: Chrome 88+ (支持Manifest V3)
+- **语法支持**: ES2020、Class Properties、Rest/Spread
+
+### 代码质量
+- **ESLint**: 代码规范和错误检查
+- **Prettier**: 代码格式化
+- **TypeScript**: 类型检查支持
+
 ## 开发计划
 
-### Phase 1: 基础架构
+### Phase 1: 基础架构 ✅
 - [x] 初始化 Manifest V3 结构
-- [ ] 实现存储管理系统
-- [ ] 实现URL匹配器
-- [ ] 基础UI组件
+- [x] 实现存储管理系统
+- [x] 实现URL匹配器
+- [x] 基础UI组件
+- [x] 构建配置和开发环境
 
-### Phase 2: 核心功能
-- [ ] 智能网站屏蔽系统
-- [ ] 沉浸式番茄钟
-- [ ] 页面净化引擎
+### Phase 2: 核心功能 ✅
+- [x] 智能网站屏蔽系统
+- [x] 沉浸式番茄钟
+- [x] 页面净化引擎
 
 ### Phase 3: 高级功能
 - [ ] 数据统计和成就系统
@@ -103,13 +153,71 @@ git clone <repository-url>
 cd chrome-focus-guard
 ```
 
-2. 在Chrome中加载扩展
+2. 安装依赖
+```bash
+npm install
+```
+
+3. 开发模式
+```bash
+npm run dev
+```
+
+4. 在Chrome中加载扩展
 - 打开 Chrome 扩展管理页面 (`chrome://extensions/`)
 - 开启"开发者模式"
 - 点击"加载已解压的扩展程序"
-- 选择项目根目录
+- 选择 `dist/` 目录
 
-3. 开发调试
-- 修改代码后，在扩展管理页面点击"重新加载"
+5. 开发调试
+- 修改代码后，webpack会自动重新构建
+- 在扩展管理页面点击"重新加载"
 - 使用 Chrome DevTools 调试 background 和 content scripts
+
+## 发布流程
+
+1. 更新版本号
+```bash
+npm version patch  # 或 minor, major
+```
+
+2. 构建生产版本
+```bash
+npm run build
+```
+
+3. 创建发布包
+```bash
+npm run zip
+```
+
+4. 提交代码
+```bash
+git add .
+git commit -m "chore: release v$(npm run version --silent)"
+git tag v$(npm run version --silent)
+git push origin main --tags
+```
+
+## 项目结构
+
+```
+chrome-focus-guard/
+├── src/                      # 源代码目录
+│   ├── background/           # 后台脚本
+│   ├── content-scripts/      # 内容脚本
+│   ├── popup/               # 弹出窗口
+│   ├── options/             # 选项页面
+│   ├── pages/               # 特殊页面
+│   └── utils/               # 工具函数
+├── dist/                    # 构建输出目录
+├── build.js                 # 自定义构建脚本
+├── webpack.config.js        # Webpack配置
+├── .babelrc                 # Babel配置
+├── .eslintrc.js            # ESLint配置
+├── .prettierrc             # Prettier配置
+├── tsconfig.json           # TypeScript配置
+├── jest.config.js          # Jest测试配置
+└── package.json            # 项目配置
+```
 
