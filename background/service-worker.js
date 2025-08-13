@@ -1,8 +1,80 @@
 // Service worker for chrome-focus-guard (Manifest V3)
 
-// 导入工具模块
-import storage from '../utils/storage.js';
-import urlMatcher from '../utils/url-matcher.js';
+// 内联存储管理功能
+class FocusGuardStorage {
+  constructor() {
+    this.defaultSettings = {
+      blacklist: [
+        'weibo.com', 'douyin.com', 'zhihu.com/hot', 'bilibili.com',
+        'youtube.com', 'twitter.com', 'facebook.com', 'instagram.com'
+      ],
+      focusSchedule: {
+        enabled: false,
+        workdays: [1, 2, 3, 4, 5],
+        startTime: '09:00',
+        endTime: '12:00'
+      }
+    };
+  }
+
+  async getSettings() {
+    try {
+      const result = await chrome.storage.sync.get(null);
+      return { ...this.defaultSettings, ...result };
+    } catch (error) {
+      console.error('Failed to get settings:', error);
+      return this.defaultSettings;
+    }
+  }
+}
+
+// 内联URL匹配功能
+class URLMatcher {
+  isInFocusTime(schedule) {
+    if (!schedule.enabled) return false;
+    
+    const now = new Date();
+    const currentDay = now.getDay();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    
+    if (!schedule.workdays.includes(currentDay)) return false;
+    
+    const startMinutes = this.timeToMinutes(schedule.startTime);
+    const endMinutes = this.timeToMinutes(schedule.endTime);
+    
+    return currentTime >= startMinutes && currentTime <= endMinutes;
+  }
+
+  timeToMinutes(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  isBlacklisted(url, blacklist) {
+    try {
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname;
+      
+      return blacklist.some(pattern => {
+        if (pattern.includes('*')) {
+          const regexPattern = pattern
+            .replace(/\./g, '\\.')
+            .replace(/\*/g, '.*');
+          const regex = new RegExp(regexPattern, 'i');
+          return regex.test(hostname);
+        }
+        return hostname.includes(pattern);
+      });
+    } catch (error) {
+      console.error('URL matching error:', error);
+      return false;
+    }
+  }
+}
+
+// 初始化工具实例
+const storage = new FocusGuardStorage();
+const urlMatcher = new URLMatcher();
 
 chrome.runtime.onInstalled.addListener((details) => {
   console.log('[FocusGuard] Extension installed/updated', details);
