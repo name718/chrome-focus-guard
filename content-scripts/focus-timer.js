@@ -16,16 +16,18 @@ class FocusTimer {
 
   async init() {
     try {
-      // 获取设置
-      const storage = await import('../utils/storage.js');
-      this.settings = await storage.default.getSettings();
+      // 内联存储功能
+      this.settings = await this.getSettings();
       
       // 创建计时器UI
       this.createTimerBar();
       
       // 监听来自popup的消息
       chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === 'START_POMODORO') {
+        if (message.type === 'FOCUS_GUARD_PING') {
+          // 响应ping消息，确认content script已加载
+          sendResponse({ ok: true, source: 'focus-timer' });
+        } else if (message.type === 'START_POMODORO') {
           this.startPomodoro(message.duration || this.settings.pomodoro.workDuration);
           sendResponse({ success: true });
         } else if (message.type === 'STOP_POMODORO') {
@@ -42,6 +44,26 @@ class FocusTimer {
       });
     } catch (error) {
       console.error('FocusTimer init error:', error);
+    }
+  }
+
+  // 内联存储方法
+  async getSettings() {
+    const defaultSettings = {
+      pomodoro: {
+        workDuration: 25,
+        breakDuration: 5,
+        longBreakDuration: 15,
+        longBreakInterval: 4
+      }
+    };
+    
+    try {
+      const result = await chrome.storage.sync.get(null);
+      return { ...defaultSettings, ...result };
+    } catch (error) {
+      console.error('Failed to get settings:', error);
+      return defaultSettings;
     }
   }
 
@@ -172,8 +194,8 @@ class FocusTimer {
   // 记录番茄钟完成
   async recordPomodoro() {
     try {
-      const focusStats = await import('../utils/focus-stats.js');
-      await focusStats.default.recordPomodoro(this.settings.pomodoro.workDuration);
+      // 内联统计记录
+      await this.recordPomodoroStats(this.settings.pomodoro.workDuration);
       
       // 发送完成事件
       chrome.runtime.sendMessage({
@@ -182,6 +204,25 @@ class FocusTimer {
       });
     } catch (error) {
       console.error('Failed to record pomodoro:', error);
+    }
+  }
+
+  // 内联统计记录方法
+  async recordPomodoroStats(duration) {
+    try {
+      const today = new Date().toDateString();
+      const key = `pomodoro_${today}`;
+      
+      const result = await chrome.storage.sync.get(key);
+      const todayStats = result[key] || { count: 0, totalTime: 0 };
+      
+      todayStats.count++;
+      todayStats.totalTime += duration;
+      
+      await chrome.storage.sync.set({ [key]: todayStats });
+      console.log(`[FocusGuard] Pomodoro recorded: ${duration}min, total today: ${todayStats.count}`);
+    } catch (error) {
+      console.error('Failed to record pomodoro stats:', error);
     }
   }
 

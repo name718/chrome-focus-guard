@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusGuard 测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #475569;
+            margin-top: 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .status.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .distraction {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .distraction h4 {
+            color: #92400e;
+            margin-top: 0;
+        }
+        .todo-list {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .todo-list h4 {
+            color: #0369a1;
+            margin-top: 0;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .todo-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 FocusGuard 扩展测试页面</h1>
+        
+        <div class="status info">
+            <strong>测试说明：</strong> 这是一个用于测试 FocusGuard 扩展功能的页面。请确保扩展已安装并启用。
+        </div>
+
+        <div class="test-section">
+            <h3>📱 扩展状态检查</h3>
+            <div id="extension-status" class="status error">
+                正在检查扩展状态...
+            </div>
+            <button onclick="checkExtensionStatus()">重新检查</button>
+        </div>
+
+        <div class="test-section">
+            <h3>⏰ 番茄钟功能测试</h3>
+            <div id="timer-status" class="status info">
+                番茄钟状态：未启动
+            </div>
+            <button onclick="testPomodoro()">测试番茄钟</button>
+            <button onclick="testStopPomodoro()">停止番茄钟</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🧹 页面净化功能测试</h3>
+            <div id="cleaner-status" class="status info">
+                净化器状态：未激活
+            </div>
+            <button onclick="testCleaner()">测试页面净化</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 干扰元素（用于测试净化功能）</h3>
+            <div class="distraction" id="distraction-1">
+                <h4>📺 推荐视频</h4>
+                <p>这是一个模拟的推荐视频区域，页面净化功能应该能够隐藏它。</p>
+            </div>
+            <div class="distraction" id="distraction-2">
+                <h4>💬 热门评论</h4>
+                <p>这是一个模拟的热门评论区域，页面净化功能应该能够隐藏它。</p>
+            </div>
+            <div class="distraction" id="distraction-3">
+                <h4>🔥 热门推荐</h4>
+                <p>这是一个模拟的热门推荐区域，页面净化功能应该能够隐藏它。</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 待办事项（模拟专注目标）</h3>
+            <div class="todo-list">
+                <h4>今日专注目标</h4>
+                <div class="todo-item">
+                    <input type="checkbox" id="todo1">
+                    <label for="todo1">完成项目文档</label>
+                </div>
+                <div class="todo-item">
+                    <input type="checkbox" id="todo2">
+                    <label for="todo2">学习新技术</label>
+                </div>
+                <div class="todo-item">
+                    <input type="checkbox" id="todo3">
+                    <label for="todo3">代码审查</label>
+                </div>
+                <div class="todo-item">
+                    <input type="checkbox" id="todo4">
+                    <label for="todo4">团队会议</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 调试信息</h3>
+            <div id="debug-info" class="status info">
+                调试信息将在这里显示...
+            </div>
+            <button onclick="clearDebugInfo()">清除调试信息</button>
+        </div>
+    </div>
+
+    <script>
+        // 调试信息管理
+        function addDebugInfo(message) {
+            const debugDiv = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+        }
+
+        function clearDebugInfo() {
+            document.getElementById('debug-info').innerHTML = '调试信息已清除...';
+        }
+
+        // 检查扩展状态
+        function checkExtensionStatus() {
+            const statusDiv = document.getElementById('extension-status');
+            
+            try {
+                // 尝试与扩展通信
+                if (typeof chrome !== 'undefined' && chrome.runtime) {
+                    chrome.runtime.sendMessage({ type: 'FOCUS_GUARD_PING' }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            statusDiv.className = 'status error';
+                            statusDiv.innerHTML = '<strong>❌ 扩展未安装或未启用</strong><br>请确保 FocusGuard 扩展已安装并启用。';
+                            addDebugInfo('扩展检查失败: ' + chrome.runtime.lastError.message);
+                        } else if (response && response.ok) {
+                            statusDiv.className = 'status success';
+                            statusDiv.innerHTML = '<strong>✅ 扩展已安装并正常工作</strong><br>FocusGuard 扩展已准备就绪。';
+                            addDebugInfo('扩展检查成功');
+                        } else {
+                            statusDiv.className = 'status error';
+                            statusDiv.innerHTML = '<strong>⚠️ 扩展响应异常</strong><br>扩展已安装但响应异常。';
+                            addDebugInfo('扩展响应异常');
+                        }
+                    });
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = '<strong>❌ Chrome 扩展 API 不可用</strong><br>请确保在 Chrome 浏览器中打开此页面。';
+                    addDebugInfo('Chrome 扩展 API 不可用');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '<strong>❌ 检查失败</strong><br>' + error.message;
+                addDebugInfo('检查失败: ' + error.message);
+            }
+        }
+
+        // 测试番茄钟功能
+        function testPomodoro() {
+            addDebugInfo('尝试启动番茄钟...');
+            
+            if (typeof chrome !== 'undefined' && chrome.tabs) {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0]) {
+                        chrome.tabs.sendMessage(tabs[0].id, { type: 'START_POMODORO' }, (response) => {
+                            if (chrome.runtime.lastError) {
+                                addDebugInfo('番茄钟启动失败: ' + chrome.runtime.lastError.message);
+                                document.getElementById('timer-status').className = 'status error';
+                                document.getElementById('timer-status').innerHTML = '番茄钟启动失败';
+                            } else {
+                                addDebugInfo('番茄钟启动成功');
+                                document.getElementById('timer-status').className = 'status success';
+                                document.getElementById('timer-status').innerHTML = '番茄钟已启动';
+                            }
+                        });
+                    }
+                });
+            } else {
+                addDebugInfo('Chrome tabs API 不可用');
+            }
+        }
+
+        // 测试停止番茄钟
+        function testStopPomodoro() {
+            addDebugInfo('尝试停止番茄钟...');
+            
+            if (typeof chrome !== 'undefined' && chrome.tabs) {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0]) {
+                        chrome.tabs.sendMessage(tabs[0].id, { type: 'STOP_POMODORO' }, (response) => {
+                            if (chrome.runtime.lastError) {
+                                addDebugInfo('番茄钟停止失败: ' + chrome.runtime.lastError.message);
+                            } else {
+                                addDebugInfo('番茄钟停止成功');
+                                document.getElementById('timer-status').className = 'status info';
+                                document.getElementById('timer-status').innerHTML = '番茄钟已停止';
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // 测试页面净化功能
+        function testCleaner() {
+            addDebugInfo('尝试切换页面净化...');
+            
+            if (typeof chrome !== 'undefined' && chrome.tabs) {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0]) {
+                        chrome.tabs.sendMessage(tabs[0].id, { type: 'TOGGLE_CLEANER' }, (response) => {
+                            if (chrome.runtime.lastError) {
+                                addDebugInfo('页面净化切换失败: ' + chrome.runtime.lastError.message);
+                            } else {
+                                addDebugInfo('页面净化切换成功');
+                                document.getElementById('cleaner-status').className = 'status success';
+                                document.getElementById('cleaner-status').innerHTML = '页面净化已激活';
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // 页面加载时自动检查扩展状态
+        window.addEventListener('load', () => {
+            addDebugInfo('页面加载完成，开始检查扩展状态...');
+            setTimeout(checkExtensionStatus, 1000);
+        });
+
+        // 监听来自扩展的消息
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+            chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+                addDebugInfo('收到扩展消息: ' + JSON.stringify(message));
+                
+                if (message.type === 'POMODORO_STARTED') {
+                    document.getElementById('timer-status').className = 'status success';
+                    document.getElementById('timer-status').innerHTML = '番茄钟已启动 - 专注中...';
+                } else if (message.type === 'POMODORO_STOPPED') {
+                    document.getElementById('timer-status').className = 'status info';
+                    document.getElementById('timer-status').innerHTML = '番茄钟已停止';
+                } else if (message.type === 'CLEANER_TOGGLED') {
+                    document.getElementById('cleaner-status').className = 'status success';
+                    document.getElementById('cleaner-status').innerHTML = '页面净化已激活';
+                }
+                
+                sendResponse({ received: true });
+            });
+        }
+    </script>
+</body>
+</html>

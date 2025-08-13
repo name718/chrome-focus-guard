@@ -15,7 +15,11 @@
     "zip": "npm run build && cd dist && zip -r ../focus-guard-v0.1.0.zip .",
     "zip:dev": "npm run build:dev && cd dist && zip -r ../focus-guard-dev.zip .",
     "zip:simple": "npm run build:simple && cd dist && zip -r ../focus-guard-simple-v0.1.0.zip .",
-    "test:extension": "node test-extension.js"
+    "test:extension": "node test-extension.js",
+    "test:functionality": "node test-functionality.js",
+    "test:communication": "node test-communication.js",
+    "test:core-features": "node test-core-features.js",
+    "test:all": "node test-all.js"
   },
   "keywords": [
     "chrome-extension",

@@ -11,12 +11,15 @@ class PageCleaner {
 
   async init() {
     try {
-      const storage = await import('../utils/storage.js');
-      this.settings = await storage.default.getSettings();
+      // 内联设置获取
+      this.settings = await this.getSettings();
       
       // 监听来自popup的消息
       chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === 'TOGGLE_CLEANER') {
+        if (message.type === 'FOCUS_GUARD_PING') {
+          // 响应ping消息，确认content script已加载
+          sendResponse({ ok: true, source: 'page-cleaner' });
+        } else if (message.type === 'TOGGLE_CLEANER') {
           this.toggleCleaner();
           sendResponse({ success: true, isActive: this.isActive });
         } else if (message.type === 'GET_CLEANER_STATUS') {
@@ -25,6 +28,24 @@ class PageCleaner {
       });
     } catch (error) {
       console.error('PageCleaner init error:', error);
+    }
+  }
+
+  // 内联设置获取方法
+  async getSettings() {
+    const defaultSettings = {
+      cleaner: {
+        enabled: false,
+        customRules: []
+      }
+    };
+    
+    try {
+      const result = await chrome.storage.sync.get(null);
+      return { ...defaultSettings, ...result };
+    } catch (error) {
+      console.error('Failed to get settings:', error);
+      return defaultSettings;
     }
   }
 
